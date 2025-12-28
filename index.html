@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>MƏLƏK</title>
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#e5e7eb;
+  font-family:Georgia,serif;
+}
+.hidden{display:none}
+
+/* NEON */
+.neon{
+  color:#22d3ee;
+  text-shadow:
+    0 0 10px #22d3ee,
+    0 0 20px #22d3ee,
+    0 0 40px #22d3ee;
+}
+
+/* LOGIN */
+.center{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.box{
+  border:2px solid #22d3ee;
+  box-shadow:0 0 30px #22d3ee;
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:800px;
+}
+
+/* INPUTS */
+input,textarea{
+  width:100%;
+  background:#000;
+  color:white;
+  border:1px solid #22d3ee;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+button{
+  background:#000;
+  color:#22d3ee;
+  border:1px solid #22d3ee;
+  padding:10px 25px;
+  border-radius:25px;
+  cursor:pointer;
+}
+button:hover{
+  background:#22d3ee;
+  color:black;
+}
+
+/* CARD */
+.card{
+  border:1px solid #22d3ee;
+  box-shadow:0 0 20px #22d3ee;
+  padding:20px;
+  border-radius:15px;
+  margin-top:20px;
+}
+hr{
+  border:0;
+  border-top:1px solid #22d3ee;
+  margin:40px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 GİRİŞ -->
+<div id="login" class="center">
+  <div class="box">
+    <h2 class="neon">GİRİŞ KODU</h2>
+    <input id="code" type="password" placeholder="Kodu yaz">
+    <button onclick="login()">Daxil ol</button>
+  </div>
+</div>
+
+<!-- 📚 SAYT -->
+<div id="site" class="center hidden">
+  <div class="box">
+
+    <!-- 🔥 BÖYÜK YAZI -->
+    <h1 class="neon" style="text-align:center;font-size:64px;letter-spacing:6px;">
+      MƏLƏK
+    </h1>
+
+    <!-- 📜 ŞEİR -->
+    <h2 class="neon">ŞEİRLƏR</h2>
+    <input id="pTitle" placeholder="Şeir başlığı">
+    <textarea id="pText" rows="4" placeholder="Şeir yaz..."></textarea>
+    <button onclick="addPoem()">Yadda saxla</button>
+    <div id="poems"></div>
+
+    <hr>
+
+    <!-- 📖 HEKAYƏ -->
+    <h2 class="neon">HEKAYƏLƏR</h2>
+    <input id="sTitle" placeholder="Hekayə başlığı">
+    <textarea id="sText" rows="6" placeholder="Hekayə yaz..."></textarea>
+    <button onclick="addStory()">Yadda saxla</button>
+    <div id="stories"></div>
+
+  </div>
+</div>
+
+<script>
+/* 🔐 KOD */
+const PASSWORD = "melek2007";
+
+/* 🔒 GİRİŞ */
+function login(){
+  if(code.value === PASSWORD){
+    loginDiv.classList.add("hidden");
+    site.classList.remove("hidden");
+    draw();
+  } else {
+    alert("Yanlış kod!");
+  }
+}
+
+/* 💾 HƏKK OLUNAN DATA (LOCALSTORAGE) */
+let poems = JSON.parse(localStorage.getItem("POEMS_HAKK")) || [];
+let stories = JSON.parse(localStorage.getItem("STORIES_HAKK")) || [];
+
+/* ➕ ƏLAVƏ */
+function addPoem(){
+  if(!pTitle.value || !pText.value) return alert("Boş buraxma");
+  poems.unshift({t:pTitle.value,c:pText.value});
+  localStorage.setItem("POEMS_HAKK", JSON.stringify(poems));
+  pTitle.value=""; pText.value="";
+  draw();
+}
+
+function addStory(){
+  if(!sTitle.value || !sText.value) return alert("Boş buraxma");
+  stories.unshift({t:sTitle.value,c:sText.value});
+  localStorage.setItem("STORIES_HAKK", JSON.stringify(stories));
+  sTitle.value=""; sText.value="";
+  draw();
+}
+
+/* 🖨️ ÇIXAR */
+function draw(){
+  poemsDiv.innerHTML="";
+  poems.forEach(x=>{
+    poemsDiv.innerHTML += `
+      <div class="card">
+        <h3 class="neon">${x.t}</h3>
+        <p>${x.c}</p>
+      </div>`;
+  });
+
+  storiesDiv.innerHTML="";
+  stories.forEach(x=>{
+    storiesDiv.innerHTML += `
+      <div class="card">
+        <h3 class="neon">${x.t}</h3>
+        <p>${x.c}</p>
+      </div>`;
+  });
+}
+
+/* SHORTCUT */
+const loginDiv = document.getElementById("login");
+const poemsDiv = document.getElementById("poems");
+const storiesDiv = document.getElementById("stories");
+</script>
+
+</body>
+</html>
