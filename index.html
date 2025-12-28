@@ -2,27 +2,19 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<title>MƏLƏK</title>
+<title>Şeirlər & Hekayələr</title>
 
 <style>
 body{
   margin:0;
-  background:#000;
+  background:black;
   color:#e5e7eb;
   font-family:Georgia,serif;
 }
-.hidden{display:none}
-
-/* NEON */
 .neon{
   color:#22d3ee;
-  text-shadow:
-    0 0 10px #22d3ee,
-    0 0 20px #22d3ee,
-    0 0 40px #22d3ee;
+  text-shadow:0 0 10px #22d3ee,0 0 20px #22d3ee;
 }
-
-/* LOGIN */
 .center{
   min-height:100vh;
   display:flex;
@@ -31,17 +23,15 @@ body{
 }
 .box{
   border:2px solid #22d3ee;
-  box-shadow:0 0 30px #22d3ee;
+  box-shadow:0 0 25px #22d3ee;
   padding:30px;
-  border-radius:20px;
+  border-radius:15px;
   width:90%;
-  max-width:800px;
+  max-width:900px;
 }
-
-/* INPUTS */
 input,textarea{
   width:100%;
-  background:#000;
+  background:black;
   color:white;
   border:1px solid #22d3ee;
   padding:10px;
@@ -49,30 +39,50 @@ input,textarea{
   margin-bottom:10px;
 }
 button{
-  background:#000;
+  background:black;
   color:#22d3ee;
   border:1px solid #22d3ee;
   padding:10px 25px;
   border-radius:25px;
   cursor:pointer;
+  margin:5px;
 }
 button:hover{
   background:#22d3ee;
   color:black;
 }
-
-/* CARD */
 .card{
   border:1px solid #22d3ee;
-  box-shadow:0 0 20px #22d3ee;
+  box-shadow:0 0 15px #22d3ee;
   padding:20px;
   border-radius:15px;
   margin-top:20px;
+  position:relative;
 }
-hr{
-  border:0;
-  border-top:1px solid #22d3ee;
-  margin:40px 0;
+.actions{
+  margin-top:15px;
+  text-align:right;
+}
+.edit-form{
+  margin-top:15px;
+  padding:15px;
+  border:1px dashed #22d3ee;
+  border-radius:10px;
+}
+.hidden{display:none;}
+.delete-btn{
+  background:#8b0000;
+  color:white;
+}
+.delete-btn:hover{
+  background:#ff0000;
+}
+.edit-btn{
+  background:#004466;
+  color:white;
+}
+.edit-btn:hover{
+  background:#22d3ee;
 }
 </style>
 </head>
@@ -82,7 +92,7 @@ hr{
 <!-- 🔐 GİRİŞ -->
 <div id="login" class="center">
   <div class="box">
-    <h2 class="neon">GİRİŞ KODU</h2>
+    <h2 class="neon">🔐 Giriş Kodu</h2>
     <input id="code" type="password" placeholder="Kodu yaz">
     <button onclick="login()">Daxil ol</button>
   </div>
@@ -92,91 +102,199 @@ hr{
 <div id="site" class="center hidden">
   <div class="box">
 
-    <!-- 🔥 BÖYÜK YAZI -->
-    <h1 class="neon" style="text-align:center;font-size:64px;letter-spacing:6px;">
-      MƏLƏK
-    </h1>
-
-    <!-- 📜 ŞEİR -->
-    <h2 class="neon">ŞEİRLƏR</h2>
-    <input id="pTitle" placeholder="Şeir başlığı">
-    <textarea id="pText" rows="4" placeholder="Şeir yaz..."></textarea>
-    <button onclick="addPoem()">Yadda saxla</button>
+    <h1 class="neon">📜 Şeirlər</h1>
+    <input id="pTitle" placeholder="Başlıq">
+    <textarea id="pText" rows="4" placeholder="Şeir..."></textarea>
+    <button onclick="addPoem()">Əlavə et</button>
     <div id="poems"></div>
 
-    <hr>
+    <hr style="margin:40px 0;border-color:#22d3ee">
 
-    <!-- 📖 HEKAYƏ -->
-    <h2 class="neon">HEKAYƏLƏR</h2>
-    <input id="sTitle" placeholder="Hekayə başlığı">
-    <textarea id="sText" rows="6" placeholder="Hekayə yaz..."></textarea>
-    <button onclick="addStory()">Yadda saxla</button>
+    <h1 class="neon">📖 Hekayələr</h1>
+    <input id="sTitle" placeholder="Başlıq">
+    <textarea id="sText" rows="6" placeholder="Hekayə..."></textarea>
+    <button onclick="addStory()">Əlavə et</button>
     <div id="stories"></div>
 
   </div>
 </div>
 
 <script>
-/* 🔐 KOD */
-const PASSWORD = "melek2007";
-
-/* 🔒 GİRİŞ */
+/* 🔐 LOGIN */
 function login(){
-  if(code.value === PASSWORD){
-    loginDiv.classList.add("hidden");
+  if(code.value==="melek2007"){
+    loginDiv.style.display="none";
     site.classList.remove("hidden");
     draw();
-  } else {
-    alert("Yanlış kod!");
+  }else alert("Yanlış kod!");
+}
+
+/* DATA */
+let poems=JSON.parse(localStorage.poems||"[]");
+let stories=JSON.parse(localStorage.stories||"[]");
+
+/* ADD */
+function addPoem(){
+  if(!pTitle.value.trim() || !pText.value.trim()){
+    alert("Başlıq və məzmunu doldurun!");
+    return;
+  }
+  poems.unshift({t:pTitle.value,c:pText.value});
+  localStorage.poems=JSON.stringify(poems);
+  pTitle.value="";pText.value="";
+  draw();
+}
+function addStory(){
+  if(!sTitle.value.trim() || !sText.value.trim()){
+    alert("Başlıq və məzmunu doldurun!");
+    return;
+  }
+  stories.unshift({t:sTitle.value,c:sText.value});
+  localStorage.stories=JSON.stringify(stories);
+  sTitle.value="";sText.value="";
+  draw();
+}
+
+/* DELETE */
+function deletePoem(index){
+  if(confirm("Bu şeiri silmək istədiyinizə əminsiniz?")){
+    poems.splice(index,1);
+    localStorage.poems=JSON.stringify(poems);
+    draw();
   }
 }
 
-/* 💾 HƏKK OLUNAN DATA (LOCALSTORAGE) */
-let poems = JSON.parse(localStorage.getItem("POEMS_HAKK")) || [];
-let stories = JSON.parse(localStorage.getItem("STORIES_HAKK")) || [];
+function deleteStory(index){
+  if(confirm("Bu hekayəni silmək istədiyinizə əminsiniz?")){
+    stories.splice(index,1);
+    localStorage.stories=JSON.stringify(stories);
+    draw();
+  }
+}
 
-/* ➕ ƏLAVƏ */
-function addPoem(){
-  if(!pTitle.value || !pText.value) return alert("Boş buraxma");
-  poems.unshift({t:pTitle.value,c:pText.value});
-  localStorage.setItem("POEMS_HAKK", JSON.stringify(poems));
-  pTitle.value=""; pText.value="";
+/* EDIT */
+let editingPoemIndex = -1;
+let editingStoryIndex = -1;
+
+function editPoem(index){
+  editingPoemIndex = index;
+  const poem = poems[index];
   draw();
 }
 
-function addStory(){
-  if(!sTitle.value || !sText.value) return alert("Boş buraxma");
-  stories.unshift({t:sTitle.value,c:sText.value});
-  localStorage.setItem("STORIES_HAKK", JSON.stringify(stories));
-  sTitle.value=""; sText.value="";
+function saveEditedPoem(){
+  const title = document.getElementById('editPoemTitle').value;
+  const content = document.getElementById('editPoemText').value;
+  
+  if(!title.trim() || !content.trim()){
+    alert("Başlıq və məzmunu doldurun!");
+    return;
+  }
+  
+  poems[editingPoemIndex] = {t: title, c: content};
+  localStorage.poems=JSON.stringify(poems);
+  editingPoemIndex = -1;
   draw();
 }
 
-/* 🖨️ ÇIXAR */
+function cancelEditPoem(){
+  editingPoemIndex = -1;
+  draw();
+}
+
+function editStory(index){
+  editingStoryIndex = index;
+  const story = stories[index];
+  draw();
+}
+
+function saveEditedStory(){
+  const title = document.getElementById('editStoryTitle').value;
+  const content = document.getElementById('editStoryText').value;
+  
+  if(!title.trim() || !content.trim()){
+    alert("Başlıq və məzmunu doldurun!");
+    return;
+  }
+  
+  stories[editingStoryIndex] = {t: title, c: content};
+  localStorage.stories=JSON.stringify(stories);
+  editingStoryIndex = -1;
+  draw();
+}
+
+function cancelEditStory(){
+  editingStoryIndex = -1;
+  draw();
+}
+
+/* DRAW */
 function draw(){
   poemsDiv.innerHTML="";
-  poems.forEach(x=>{
-    poemsDiv.innerHTML += `
-      <div class="card">
-        <h3 class="neon">${x.t}</h3>
-        <p>${x.c}</p>
-      </div>`;
+  poems.forEach((x,index)=>{
+    if(editingPoemIndex === index){
+      poemsDiv.innerHTML+=`
+        <div class="card">
+          <h3 class="neon">Şeiri redaktə et</h3>
+          <div class="edit-form">
+            <input id="editPoemTitle" value="${x.t.replace(/"/g, '&quot;')}" placeholder="Başlıq">
+            <textarea id="editPoemText" rows="4" placeholder="Şeir...">${x.c}</textarea>
+            <div class="actions">
+              <button onclick="saveEditedPoem()">Yadda saxla</button>
+              <button onclick="cancelEditPoem()">Ləğv et</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }else{
+      poemsDiv.innerHTML+=`
+        <div class="card">
+          <h3 class="neon">${x.t}</h3>
+          <p style="white-space: pre-line;">${x.c}</p>
+          <div class="actions">
+            <button class="edit-btn" onclick="editPoem(${index})">Düzəliş et</button>
+            <button class="delete-btn" onclick="deletePoem(${index})">Sil</button>
+          </div>
+        </div>
+      `;
+    }
   });
-
+  
   storiesDiv.innerHTML="";
-  stories.forEach(x=>{
-    storiesDiv.innerHTML += `
-      <div class="card">
-        <h3 class="neon">${x.t}</h3>
-        <p>${x.c}</p>
-      </div>`;
+  stories.forEach((x,index)=>{
+    if(editingStoryIndex === index){
+      storiesDiv.innerHTML+=`
+        <div class="card">
+          <h3 class="neon">Hekayəni redaktə et</h3>
+          <div class="edit-form">
+            <input id="editStoryTitle" value="${x.t.replace(/"/g, '&quot;')}" placeholder="Başlıq">
+            <textarea id="editStoryText" rows="6" placeholder="Hekayə...">${x.c}</textarea>
+            <div class="actions">
+              <button onclick="saveEditedStory()">Yadda saxla</button>
+              <button onclick="cancelEditStory()">Ləğv et</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }else{
+      storiesDiv.innerHTML+=`
+        <div class="card">
+          <h3 class="neon">${x.t}</h3>
+          <p style="white-space: pre-line;">${x.c}</p>
+          <div class="actions">
+            <button class="edit-btn" onclick="editStory(${index})">Düzəliş et</button>
+            <button class="delete-btn" onclick="deleteStory(${index})">Sil</button>
+          </div>
+        </div>
+      `;
+    }
   });
 }
 
-/* SHORTCUT */
-const loginDiv = document.getElementById("login");
-const poemsDiv = document.getElementById("poems");
-const storiesDiv = document.getElementById("stories");
+/* SHORT */
+const loginDiv=document.getElementById("login");
+const poemsDiv=document.getElementById("poems");
+const storiesDiv=document.getElementById("stories");
 </script>
 
 </body>
